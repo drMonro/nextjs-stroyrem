@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
+}
+
+model Offer {
+  available   Boolean
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  //  id    String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  id          String       @id @unique @map("_id")
+  name        String
+  price       Int
+  Category    Category?    @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  description String
+  picture     String[]
+  param       OfferParam[]
+}
+
+model OfferParam {
+  id        String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  value     String @unique
+  Offer     Offer? @relation(fields: [offerId], references: [id])
+  offerId   String @unique
+  Param     Param? @relation(fields: [paramId, paramName], references: [id, name])
+  paramId   String @unique
+  paramName String
+}
+
+model Param {
+  id         String       @id @default(dbgenerated()) @map("_id") @db.ObjectId
+  name       String       @unique
+  OfferParam OfferParam[]
+}
+
+model Category {
+  id       String  @id @unique @map("_id")
+  parentId String
+  name     String?
+  Offer    Offer[]
+}
