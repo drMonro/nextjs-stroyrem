@@ -1,4 +1,4 @@
-import Layout from '../../components/layout';
+import LayoutCommon from '../../components/layoutCommon';
 import Head from 'next/head';
 import {skipToken} from '@reduxjs/toolkit/query';
 import {useRouter} from 'next/dist/client/router';
@@ -17,7 +17,7 @@ export default function Pokemon() {
   );
 
   return (
-    <Layout>
+    <LayoutCommon>
       <Head>
         <title>{data?.species.name ?? ''}</title>
       </Head>
@@ -33,7 +33,7 @@ export default function Pokemon() {
           </>
         ) : null}
       </article>
-    </Layout>
+    </LayoutCommon>
   );
 }
 

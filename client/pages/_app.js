@@ -1,8 +1,10 @@
 import {createGlobalStyle} from "styled-components";
 import NextNProgress from 'nextjs-progressbar';
+import {AppWrapper} from "../context/AppContext";
 
 const {default: AbortController} = require("abort-controller");
 const {default: fetch, Headers, Request, Response} = require("node-fetch");
+import 'antd/dist/antd.css';
 
 Object.assign(globalThis, {
     fetch,
@@ -15,14 +17,29 @@ Object.assign(globalThis, {
 const {reduxWrapper} = require("../lib/store");
 
 const GlobalStyle = createGlobalStyle`
+  @font-face {
+    font-family: "Akrobat";
+    font-style: normal;
+    font-weight: bold;
+    font-display: optional;
+    src: url(/fonts/akrobat-bold.woff2) format("woff2");
+  }
+
+  @font-face {
+    font-family: "Akrobat";
+    font-style: normal;
+    font-weight: normal;
+    font-display: optional;
+    src: url(/fonts/akrobat.woff2) format("woff2");
+  }
   html,
   body {
     padding: 0;
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    font-family: Akrobat, sans-serif;
     line-height: 1.6;
     font-size: 18px;
+    font-weight: normal;
   }
 
   * {
@@ -30,7 +47,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   a {
-    color: plum;
+    color: black;
     text-decoration: none;
   }
 
@@ -45,17 +62,23 @@ const GlobalStyle = createGlobalStyle`
 `
 
 function App({Component, pageProps}) {
-    return <>
-        <GlobalStyle/>
-        <NextNProgress
-            color="#29D"
-            startPosition={0.3}
-            stopDelayMs={200}
-            height={3}
-            showOnShallow
-        />
-        <Component {...pageProps} />
-    </>;
+    return (
+        <>
+            <GlobalStyle/>
+            <NextNProgress
+                color="#29D"
+                startPosition={0.3}
+                stopDelayMs={200}
+                height={3}
+                showOnShallow
+            />
+            <AppWrapper>
+                <Component {...pageProps} />
+
+            </AppWrapper>
+
+        </>
+    );
 }
 
 export default reduxWrapper.withRedux(App);
