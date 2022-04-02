@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useMemo, useState} from "react";
 
-const AppContext = createContext();
+const AppContext = createContext([undefined, undefined]);
 
 export function AppWrapper({children}) {
     const [appState, setAppState] = useState();

@@ -2,17 +2,17 @@ import {createGlobalStyle} from "styled-components";
 import NextNProgress from 'nextjs-progressbar';
 import {AppWrapper} from "../context/AppContext";
 
-const {default: AbortController} = require("abort-controller");
-const {default: fetch, Headers, Request, Response} = require("node-fetch");
+// const {default: AbortController} = require("abort-controller");
+// const {default: fetch, Headers, Request, Response} = require("node-fetch");
 import 'antd/dist/antd.css';
 
-Object.assign(globalThis, {
-    fetch,
-    Headers,
-    Request,
-    Response,
-    AbortController,
-});
+// Object.assign(globalThis, {
+//     fetch,
+//     Headers,
+//     Request,
+//     Response,
+//     AbortController,
+// });
 
 const {reduxWrapper} = require("../lib/store");
 
@@ -59,6 +59,7 @@ const GlobalStyle = createGlobalStyle`
     max-width: 100%;
     display: block;
   }
+  
 `
 
 function App({Component, pageProps}) {

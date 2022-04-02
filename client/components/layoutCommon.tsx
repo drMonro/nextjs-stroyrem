@@ -1,14 +1,16 @@
-import Head from 'next/head';
-import Image from 'next/image';
 import styles from './layout.module.css';
 import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
-import React, {useContext} from 'react';
+import React from 'react';
 import Navigation from './common/navigation';
 import {Layout} from 'antd';
-import styled, {createGlobalStyle} from 'styled-components';
+import styled from 'styled-components';
 import {Content, Footer} from 'antd/lib/layout/layout';
+// import Logo from './logo.svg'
+import Logo from '../public/images/svg/logo-white.svg';
+// import Logo from '../Logo.svg'
 
+// import {ReactComponent as IconBookmark} from '../Logo.svg'
 const name = 'RTK-Query SSR example';
 export const siteTitle = name;
 
@@ -20,9 +22,7 @@ const StyledLayout = styled(Layout)`
 
 const StyledHeader = styled('header')`
   background-color: #00408C;
-  //font-weight: bold;
   padding: 0 50px;
-  
 `;
 
 import {useAppContext} from '../context/AppContext'
@@ -40,10 +40,9 @@ export default function LayoutCommon(props: {
 
   return (
 
-    <StyledLayout className="layout">
-      {/*<GlobalStyle/>*/}
+    <StyledLayout>
       <StyledHeader>
-        {/*<header>*/}
+          <Logo/>
           <Navigation/>
 
           {home ? (
@@ -59,7 +58,6 @@ export default function LayoutCommon(props: {
               </h2>
             </>
           )}
-        {/*</header>*/}
       </StyledHeader>
       <Content style={{padding: '0 50px'}}>
         {children}
