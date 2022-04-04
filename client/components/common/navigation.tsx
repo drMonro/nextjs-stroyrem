@@ -3,6 +3,7 @@ import {AppstoreOutlined, MailOutlined, SettingOutlined} from '@ant-design/icons
 import React, {useState} from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import {device} from '../../constants/media'
 
 const {SubMenu} = Menu;
 
@@ -10,10 +11,18 @@ type menuKey = {
   key: string,
 }
 
-const StyledMenu = styled(Menu)`
+const StyledRow = styled(Row)`
   background-color: #00408C;
-  //font-weight: bold;
-  //padding: 0 50px;
+  padding: 0 50px;
+  
+  @media ${device.laptopL} {
+    background-color: red;
+
+  }
+  
+  a {
+    color: white;
+  }
 `;
 
 export default function Navigation(): JSX.Element {
@@ -25,19 +34,19 @@ export default function Navigation(): JSX.Element {
   }
 
   return (
-    <Affix offsetTop={0}>
-      <Row>
+    // <Affix offsetTop={0}>
+      <StyledRow>
         <Col span={24}>
-          <Space size={'large'}>
+          <Space size={50}>
             <Link href="/pokemon/bulbasaur">SSR</Link>{' '}
             <Link href="/pokemon/bulbasaur">SSR</Link>{' '}
             <Link href="/pokemon/bulbasaur">SSR</Link>{' '}
             <Link href="/pokemon/bulbasaur">SSR</Link>{' '}
           </Space>
         </Col>
-      </Row>
+      </StyledRow>
 
-    </Affix>
+    // </Affix>
   );
 
 }

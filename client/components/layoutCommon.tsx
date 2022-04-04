@@ -3,7 +3,7 @@ import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
 import React from 'react';
 import Navigation from './common/navigation';
-import {Layout} from 'antd';
+import {Affix, Layout} from 'antd';
 import styled from 'styled-components';
 import {Content, Footer} from 'antd/lib/layout/layout';
 // import Logo from './logo.svg'
@@ -21,11 +21,15 @@ const StyledLayout = styled(Layout)`
 `;
 
 const StyledHeader = styled('header')`
-  background-color: #00408C;
-  padding: 0 50px;
+  //padding: 0 50px;
+`;
+
+const StyledLogo = styled(Logo)`
+  width: 250px;
 `;
 
 import {useAppContext} from '../context/AppContext'
+
 export default function LayoutCommon(props: {
   children: React.ReactNode;
   home?: boolean;
@@ -41,8 +45,10 @@ export default function LayoutCommon(props: {
   return (
 
     <StyledLayout>
-      <StyledHeader>
-          <Logo/>
+      <Affix offsetTop={0}>
+
+        <StyledHeader>
+          {/*<StyledLogo/>*/}
           <Navigation/>
 
           {home ? (
@@ -58,7 +64,8 @@ export default function LayoutCommon(props: {
               </h2>
             </>
           )}
-      </StyledHeader>
+        </StyledHeader>
+      </Affix>
       <Content style={{padding: '0 50px'}}>
         {children}
         {!home && (

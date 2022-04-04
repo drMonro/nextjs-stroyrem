@@ -1,54 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import LayoutCommon, {siteTitle} from '../components/layoutCommon';
-import styled, {createGlobalStyle} from 'styled-components'
-import {reduxWrapper} from '../lib/store';
-
-// const GlobalStyle = createGlobalStyle`
-//   @font-face {
-//     font-family: "Akrobat";
-//     font-style: normal;
-//     font-weight: 100 900;
-//     font-display: optional;
-//     src: url(/fonts/akrobat-bold.woff2) format("woff2");
-//   }
-//
-//   ,
-//   html,
-//   body {
-//     padding: 0;
-//     margin: 0;
-//     font-family: Akrobat, sans-serif;
-//     //font-family: Akrobat, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-//     //Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-//     display: none;
-//     line-height: 1.6;
-//     font-size: 18px;
-//   }
-//
-//   * {
-//     box-sizing: border-box;
-//   }
-//
-//   a {
-//     color: plum;
-//     text-decoration: none;
-//   }
-//
-//   a:hover {
-//     text-decoration: underline;
-//   }
-//
-//   img {
-//     max-width: 100%;
-//     display: block;
-//   }
-//
-//   title {
-//     display:none;
-//     font-size: 50px;
-//   }
-// `
+import styled from 'styled-components'
 
 const HomeSection = styled.section`
   font-size: 1.2rem;
@@ -60,7 +13,6 @@ export default function Home({}) {
 
   return (
     <>
-      {/*<GlobalStyle/>*/}
 
       <LayoutCommon home>
         <Head>
@@ -99,8 +51,3 @@ export default function Home({}) {
 // );
 
 
-// export async function getStaticProps() {
-//     return {
-//         props: {},
-//     };
-// }

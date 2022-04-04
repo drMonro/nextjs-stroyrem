@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+//model Offer {
+//  available   Boolean
+//  createdAt   DateTime   @default(now())
+//  updatedAt   DateTime   @updatedAt
+//  //  id    String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
+//  id          Int        @id
+//  name        String
+//  price       Int
+//  category    Category   @relation(fields: [categoryId], references: [id])
+//  categoryId  String
+//  description String
+////  picture     OfferImg[]
+//  //  param       OfferParam[]
+//}
+
+model Category {
+  id       String  @id
+  parentId String?
+  name     String?
+  //  offers   Offer[]
+}
+
+//model OfferImg {
+//  id      Int    @id @default(autoincrement())
+//  offer   Offer  @relation(fields: [offerId], references: [id])
+//  offerId Int
+//  imgUrl  String
+//
+//}
+
+//
+//model OfferParam {
+////  id        String @id @default(dbgenerated()) @map("_id") @db.ObjectId
+//    id          Int       @id @default(autoincrement())
+//
+//  value     String
+//  Offer     Offer? @relation(fields: [offerId], references: [id])
+//  offerId   Int
+//  Param     Param? @relation(fields: [paramId, paramName], references: [id, name])
+//  paramId   Int
+//  paramName String
+//}
+//
+model Param {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  //  OfferParam OfferParam[]
+}
