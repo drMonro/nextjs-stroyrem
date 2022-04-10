@@ -1,2 +1,6 @@
-\.idea
-
+.idea
+node_modules
+package-lock.json
+.env
+/gulpfile.js
+/package.json
