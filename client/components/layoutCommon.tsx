@@ -15,7 +15,8 @@ const name = 'RTK-Query SSR example';
 export const siteTitle = name;
 
 const StyledLayout = styled(Layout)`
-  background-color: white;
+  background-color: #00408CFF;
+  padding-top: 20px;
   //font-weight: bold;
   //padding: 0 50px;
 `;
@@ -45,38 +46,38 @@ export default function LayoutCommon(props: {
   return (
 
     <StyledLayout>
-      <Affix offsetTop={0}>
+      {/*<Affix offsetTop={0}>*/}
 
-        <StyledHeader>
-          {/*<StyledLogo/>*/}
-          <Navigation/>
+      {/*  <StyledHeader>*/}
+      {/*    /!*<StyledLogo/>*!/*/}
+      {/*    <Navigation/>*/}
 
-          {home ? (
-            <>
-              <h1 className={utilStyles.heading2Xl}>{name}</h1>
-            </>
-          ) : (
-            <>
-              <h2 className={utilStyles.headingLg}>
-                <Link href="/">
-                  <a className={utilStyles.colorInherit}>{name}</a>
-                </Link>
-              </h2>
-            </>
-          )}
-        </StyledHeader>
-      </Affix>
-      <Content style={{padding: '0 50px'}}>
+      {/*    {home ? (*/}
+      {/*      <>*/}
+      {/*        <h1 className={utilStyles.heading2Xl}>{name}</h1>*/}
+      {/*      </>*/}
+      {/*    ) : (*/}
+      {/*      <>*/}
+      {/*        <h2 className={utilStyles.headingLg}>*/}
+      {/*          <Link href="/">*/}
+      {/*            <a className={utilStyles.colorInherit}>{name}</a>*/}
+      {/*          </Link>*/}
+      {/*        </h2>*/}
+      {/*      </>*/}
+      {/*    )}*/}
+      {/*  </StyledHeader>*/}
+      {/*</Affix>*/}
+      <Content>
         {children}
-        {!home && (
-          <div className={styles.backToHome}>
-            <Link href="/">
-              <a>← Back to home</a>
-            </Link>
-          </div>
-        )}
+        {/*{!home && (*/}
+        {/*  <div className={styles.backToHome}>*/}
+        {/*    <Link href="/">*/}
+        {/*      <a>← Back to home</a>*/}
+        {/*    </Link>*/}
+        {/*  </div>*/}
+        {/*)}*/}
       </Content>
-      <Footer style={{textAlign: 'center'}}>Ant Design ©2018 Created by Ant UED</Footer>
+      <Footer style={{textAlign: 'center'}}>СтройРемонт24 ©2022</Footer>
     </StyledLayout>
   );
 }

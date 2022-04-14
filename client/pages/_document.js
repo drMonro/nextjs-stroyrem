@@ -30,6 +30,8 @@ class MyDocument extends Document {
             <Head>
                 <meta charSet="UTF-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                <meta name="yandex" content="noindex, nofollow"/>
+                <meta name="googlebot" content="noindex, nofollow"/>
                 <link rel="icon" href="/favicon.ico"/>
 
                 <link rel="preload" href="./fonts/akrobat-bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous"/>
