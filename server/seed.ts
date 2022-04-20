@@ -1,5 +1,5 @@
 import {PrismaClient} from '@prisma/client'
-import {collectAllUniqParams, get1cData, upsertCategories, upsertParams} from './seed-services';
+import {collectAllUniqParams, collectAllVendors, get1cData, prepareData, upsertCategories, upsertOffers, upsertParams, upsertVendors} from './seed-services';
 
 const prisma = new PrismaClient()
 
@@ -8,11 +8,12 @@ async function main() {
   await prisma.$connect();
   try {
     console.log(`Start seeding ...`)
-    // console.log(categories)
-    await upsertCategories(prisma, categories);
-    await upsertParams(prisma, collectAllUniqParams(offers1c));
-    // await prepareData(prisma, offers1c);
-    // await upsertOffers(prisma, offers1c);
+    // await upsertCategories(prisma, categories);
+    // await upsertParams(prisma, collectAllUniqParams(offers1c));
+    // await upsertVendors(prisma, collectAllVendors(offers1c));
+
+    await prepareData(prisma, offers1c);
+    await upsertOffers(prisma, offers1c);
     console.log(`Seeding finished.`)
   } catch (err) {
     console.error(err)

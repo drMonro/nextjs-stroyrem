@@ -1,27 +1,32 @@
 import {createContext, useContext, useEffect, useMemo, useState} from "react";
 
-const AppContext = createContext([undefined, undefined]);
+// here will be global data - current authenticated user
+// const CurrentUserContext = createContext([undefined, undefined]);
+// const CurrentUserContext = createContext('guest');
+const CurrentUserContext = createContext('guest');
 
 export function AppWrapper({children}) {
-    const [appState, setAppState] = useState();
+    const [appState, setAppState] = useState('check');
 
     const value = useMemo(() => ([appState, setAppState]), [appState, setAppState]);
-    // console.log('provider')
-    // console.log(data)
-    useEffect(() => {
 
-        setAppState({datadd: '323'})
-    }, [])
+    useEffect(() => {
+        setAppState('323')
+    }, []);
+
+    let sharedState =
+        '42'
+
 
     return (
-        <AppContext.Provider value={value}>
+        <CurrentUserContext.Provider value={sharedState}>
             {children}
-        </AppContext.Provider>
+        </CurrentUserContext.Provider>
     );
 }
 
 export function useAppContext() {
-    return useContext(AppContext);
+    return useContext(CurrentUserContext);
 }
 
 

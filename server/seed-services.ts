@@ -1,5 +1,7 @@
 import axios from 'axios';
 import {PrismaClient} from '@prisma/client';
+import {Type} from 'class-transformer';
+
 const parser = require('xml2json');
 
 export const get1cData = async () => {
@@ -35,23 +37,45 @@ export const collectAllUniqParams = (offers: any) => {
   return allParams;
 }
 
-export const upsertParams = async (prisma: any, all1cParams: any) => {
-  // const webParams = await prisma.param.findMany();
-  let dataForUpdate: any = [];
+export const collectAllVendors = (offers: any) => {
+  const allVendors = [];
+  console.log(`Start forming vendors data ...`)
+  for (const offer of offers) {
+    const vendorParam = offer.param.find(param => param.name === 'Производитель, марка');
+    if (vendorParam) {
+      let duplicateVendorIndex = allVendors.indexOf(vendorParam.$t);
+      if (duplicateVendorIndex < 0) {
+        allVendors.push(vendorParam.$t);
+      }
+    }
 
-  for (const param of all1cParams) {
-    // let paramDb = webParams.find((webParam: any) => {
-    //   return webParam.name === param;
-    // })
-
-    // if (!paramDb) {
-      dataForUpdate.push(param)
-    // }
   }
+  console.log(`Forming params finished.`)
+  return allVendors;
+}
 
-  console.log(`${dataForUpdate.length} parameters will be updated or create id MongoDb`);
-  for (const param of dataForUpdate) {
-    console.log(param)
+export const upsertVendors = async (prisma: PrismaClient, allVendors: any) => {
+
+  console.log(`${allVendors.length} vendors will be updated or create id DB`);
+  for (const vendor of allVendors) {
+    await prisma.vendor.upsert({
+      where: {
+        title: vendor,
+      },
+      update: {
+        title: vendor,
+      },
+      create: {
+        title: vendor,
+      },
+    })
+  }
+  console.log(`Vendors was seeded successfully`);
+}
+
+export const upsertParams = async (prisma: PrismaClient, all1cParams: any) => {
+  console.log(`${all1cParams.length} parameters will be updated or create id DB`);
+  for (const param of all1cParams) {
     await prisma.param.upsert({
       where: {
         name: param,
@@ -61,117 +85,165 @@ export const upsertParams = async (prisma: any, all1cParams: any) => {
       },
       create: {
         name: param,
-        // id: 31233123
       },
     })
   }
-
   console.log(`Parameters was seeded successfully`);
 }
 
-// export let prepareData = async (prisma: any, offers1c: any) => {
-//   console.log(`Preparing data is started`);
-//
-//   const webParams = await prisma.param.findMany();
-//   for (const offer of offers1c) {
-//     offer.available = offer.available === 'true';
-//     if (typeof (offer.picture) === 'string') {
-//       offer.picture = [offer.picture]
-//     }
-//
-//     if (Number(offer.price)) {
-//       offer.price = Math.round(offer.price)
-//     } else {
-//       offer.price = 0;
-//     }
-//     delete offer.latitude;
-//     delete offer.longitude;
-//     delete offer.currencyId;
-//     delete offer.url;
-//     delete offer.quant;
-//     delete offer.sales_notes;
-//
-//     for (const param of offer.param) {
-//       const dbParam = webParams.find((webParam: any) => {
-//         return webParam.name === param.name;
-//       })
-//       if (dbParam) {
-//         param.paramId = dbParam.id;
-//         param.paramName = dbParam.name;
-//         delete param.name;
-//       }
-//       param.value = param.$t;
-//       delete param.$t;
-//     }
-//   }
-//   console.log(`Data was prepared successfully`);
-// }
-//
-// export const upsertOffers = async (prisma: PrismaClient, offers1c: any) => {
-//   for (const offer of offers1c) {
-//     console.log(`'${offer.name}' ----> is updating`);
-//     await prisma.offer.upsert({
-//       where: {
-//         id: offer.id,
-//       },
-//       update: {
-//         available: offer.available,
-//         name: offer.name,
-//         price: offer.price,
-//         categoryId: offer.categoryId,
-//         picture: offer.picture,
-//         description: offer.description,
-//       },
-//       create: {
-//         available: offer.available,
-//         id: offer.id,
-//         name: offer.name,
-//         price: offer.price,
-//         categoryId: offer.categoryId,
-//         picture: offer.picture,
-//         description: offer.description,
-//         param: {
-//           createMany: {
-//             data: offer.param,
-//           },
-//         },
-//       },
-//     })
-//
-//     for (const param of offer.param) {
-//       await prisma.offerParam.updateMany({
-//         where: {
-//           AND: [
-//             {
-//               paramId: param.paramId,
-//             },
-//             {
-//               offerId: offer.id
-//             },
-//           ],
-//         },
-//         data: {
-//           value: param.value
-//         },
-//       })
-//     }
-//   }
-// }
+export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
+  console.log(`Preparing data is started`);
+
+  const webParams = await prisma.param.findMany();
+
+  for (const offer of offers1c) {
+    offer.available = offer.available === 'true';
+    if (typeof (offer.picture) === 'string') {
+      offer.picture = [offer.picture]
+    }
+
+    if (Number(offer.price)) {
+      offer.price = Math.round(offer.price)
+    } else {
+      offer.price = 0;
+    }
+    delete offer.latitude;
+    delete offer.longitude;
+    delete offer.currencyId;
+    delete offer.url;
+    delete offer.quant;
+    delete offer.sales_notes;
+
+    for (const param of offer.param) {
+      const dbParam = webParams.find((webParam: any) => {
+        return webParam.name === param.name;
+      })
+      // if (dbParam) {
+      param.paramId = dbParam.id;
+      // param.paramName = dbParam.name;
+      delete param.name;
+      // }
+      param.value = param.$t;
+      delete param.$t;
+    }
+    // console.log(offer)
+  }
+  console.log(`Data was prepared successfully`);
+}
+
+export const upsertOffers = async (prisma: PrismaClient, offers1c: any) => {
+  for (const [index, value] of offers1c.entries()) {
+    // if (index === 0 || index === 1 || index === 2) {
+    if (index === 0) {
+      // let offer = offers1c[0];
+      console.log(`'${value.name}' ----> is updating`);
+      console.log(value)
+      await prisma.offer.upsert({
+        where: {
+          id: value.id,
+        },
+        update: {
+          available: value.available,
+          // relevantWith: {
+          //   connect: {
+          //     id: "00000000331",
+          //   },
+          // },
+
+          relevantOffers: {
+            connect:
+              [{ id: 'УТ000006442' }, { id: 'УТ000006460' }],
+              // id: "УТ000006442",
+
+          }
+          // }
+          // title: offer.name,
+          // price: offer.price,
+          // // categoryId: offer.categoryId,
+          // // picture: offer.picture,
+          // description: offer.description,
+        },
+        create: {
+          available: value.available,
+          id: value.id,
+          title: value.name,
+          price: value.price,
+          // description: offer.description,
+          description: 'test',
+          mataTitle: 'test',
+          slug: 'test',
+          sku: 'test',
+          quantity: 0,
+          params: {
+            createMany: {
+              data: value.param,
+            },
+          },
+          images: {
+            createMany: {
+              data: [],
+            },
+          },
+          vendor: {
+            createMany: {
+              data: [],
+            },
+          },
+          // relevantWith: {
+          //   connect: {
+          //     id: "2",
+          //   },
+          // },
+          // relevantOffers: {
+          //   connect: {
+          //     id: "2",
+          //   },
+          // }
+
+          // relevantedWith: {
+          //   createMany: {
+          //     data: [],
+          //   },
+          // },
+          // categoryId: offer.categoryId,
+          // picture: offer.picture,
+          // param: {
+          //   createMany: {
+          //     data: offer.param,
+          //   },
+          // },
+        },
+      })
+    }
+    // for (const param of offer.param) {
+    //   await prisma.offerParam.updateMany({
+    //     where: {
+    //       AND: [
+    //         {
+    //           paramId: param.paramId,
+    //         },
+    //         {
+    //           offerId: offer.id
+    //         },
+    //       ],
+    //     },
+    //     data: {
+    //       value: param.value
+    //     },
+    //   })
+    // }
+  }
+}
 
 export const upsertCategories = async (prisma: PrismaClient, all1cCats: any) => {
-  const webCategories = await prisma.category.findMany();
   let dataForUpdate: any = [];
   for (const cat of all1cCats.category) {
-    let catDb = webCategories.find((webCat: any) => {
-      return webCat.id === cat.id && (webCat.name === cat.$t || !cat.$t) && webCat.parentId === cat.parentId;
-    })
-    if (!catDb) {
-      cat.name = cat.$t;
-      delete cat.$t;
-      dataForUpdate.push(cat)
-    }
+    cat.name = cat.$t;
+    delete cat.$t;
+    dataForUpdate.push(cat)
   }
-  console.log(`${dataForUpdate.length} categories will be updated or create id MongoDb`);
+
+  console.log(`${dataForUpdate.length} categories will be updated or create id DB`);
 
   for (const param of dataForUpdate) {
     await prisma.category.upsert({
@@ -179,13 +251,16 @@ export const upsertCategories = async (prisma: PrismaClient, all1cCats: any) => 
         id: param.id,
       },
       update: {
-        name: param.name,
+        title: param.name,
         parentId: param.parentId,
       },
       create: {
         id: param.id,
-        name: param.name,
+        title: param.name,
         parentId: param.parentId,
+        // metaTitle: 'test',
+        // slug: 'test',
+        // description: 'test',
       },
     })
   }

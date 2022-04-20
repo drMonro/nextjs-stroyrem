@@ -1,5 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -11,50 +9,80 @@ generator client {
 }
 
 model Offer {
-  available   Boolean
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  //  id    String  @id @default(dbgenerated()) @map("_id") @db.ObjectId
-  id          Int        @id
-  name        String
-  price       Int
-  category    Category   @relation(fields: [categoryId], references: [id])
-  categoryId  String
-  description String
-//  picture     OfferImg[]
-  //  param       OfferParam[]
+  id             String          @id
+  available      Boolean
+  title          String
+  mataTitle      String?
+  slug           String?
+  description    String
+  sku            String?
+  price          Int
+  quantity       Int?
+  categories     OfferCategory[]
+  images         OfferImg[]
+  vendor         OfferVendor[]
+  params         OfferParam[]
+  relevantWith   Offer[]         @relation("RelevantOffers", references: [id])
+  relevantOffers Offer[]         @relation("RelevantOffers", references: [id])
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@fulltext([title])
 }
 
 model Category {
-  id       String  @id
-  parentId String?
-  name     String?
-  offers   Offer[]
+  id          String          @id
+  parentId    String?
+  title       String?
+  metaTitle   String?
+  slug        String?
+  description String?
+  offers      OfferCategory[]
 }
 
-//model OfferImg {
-//  id      Int    @id @default(autoincrement())
-//  offer   Offer  @relation(fields: [offerId], references: [id])
-//  offerId Int
-//  imgUrl  String
-//
-//}
+model OfferCategory {
+  id         Int      @id @default(autoincrement())
+  offer      Offer    @relation(fields: [offerId], references: [id])
+  offerId    String
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String
+}
 
-//
-//model OfferParam {
-////  id        String @id @default(dbgenerated()) @map("_id") @db.ObjectId
-//    id          Int       @id @default(autoincrement())
-//
-//  value     String
-//  Offer     Offer? @relation(fields: [offerId], references: [id])
-//  offerId   Int
-//  Param     Param? @relation(fields: [paramId, paramName], references: [id, name])
-//  paramId   Int
-//  paramName String
-//}
-//
+model Vendor {
+  id          Int           @id @default(autoincrement())
+  title       String        @unique
+  metaTitle   String?
+  slug        String?
+  description String?
+  offers      OfferVendor[]
+}
+
+model OfferVendor {
+  id       Int    @id @default(autoincrement())
+  offer    Offer  @relation(fields: [offerId], references: [id])
+  offerId  String
+  vendor   Vendor @relation(fields: [vendorId], references: [id])
+  vendorId Int
+}
+
+model OfferImg {
+  id      Int    @id @default(autoincrement())
+  offer   Offer  @relation(fields: [offerId], references: [id])
+  offerId String
+  imgUrl  String
+}
+
 model Param {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  //  OfferParam OfferParam[]
+  id     Int          @id @default(autoincrement())
+  name   String       @unique
+  offers OfferParam[]
+}
+
+model OfferParam {
+  id      Int    @id @default(autoincrement())
+  offer   Offer  @relation(fields: [offerId], references: [id])
+  offerId String
+  param   Param  @relation(fields: [paramId], references: [id])
+  paramId Int
+  value   String
 }

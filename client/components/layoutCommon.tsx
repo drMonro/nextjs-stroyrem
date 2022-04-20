@@ -6,9 +6,11 @@ import Navigation from './common/navigation';
 import {Affix, Layout} from 'antd';
 import styled from 'styled-components';
 import {Content, Footer} from 'antd/lib/layout/layout';
+
 // import Logo from './logo.svg'
 import Logo from '../public/images/svg/logo-white.svg';
 // import Logo from '../Logo.svg'
+import {useAppContext} from '../context/AppContext'
 
 // import {ReactComponent as IconBookmark} from '../Logo.svg'
 const name = 'RTK-Query SSR example';
@@ -21,6 +23,8 @@ const StyledLayout = styled(Layout)`
 `;
 
 const StyledHeader = styled('header')`
+  background-color: #00408C;
+
   //padding: 0 50px;
 `;
 
@@ -28,19 +32,13 @@ const StyledLogo = styled(Logo)`
   width: 250px;
 `;
 
-import {useAppContext} from '../context/AppContext'
 
-export default function LayoutCommon(props: {
-  children: React.ReactNode;
-  home?: boolean;
-}) {
+export default function LayoutCommon(props: { children: React.ReactNode; home?: boolean; }) {
   const {children, home} = props;
-  // console.log(test)
-
-
-  const [data, setData] = useAppContext();
-  console.log('context')
-  console.log(data)
+  // const [data, setData] = useAppContext();
+  //
+  // console.log('context');
+  // console.log(data);
 
   return (
 

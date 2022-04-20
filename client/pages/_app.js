@@ -1,3 +1,5 @@
+// noinspection CssUnknownTarget
+
 import {createGlobalStyle} from "styled-components";
 import NextNProgress from 'nextjs-progressbar';
 import {AppWrapper} from "../context/AppContext";
@@ -22,7 +24,7 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: bold;
     font-display: optional;
-    src: url(/fonts/akrobat-bold.woff2) format("woff2");
+    src: url('/fonts/akrobat-bold.woff2') format("woff2");
   }
 
   @font-face {
@@ -30,7 +32,15 @@ const GlobalStyle = createGlobalStyle`
     font-style: normal;
     font-weight: normal;
     font-display: optional;
-    src: url(/fonts/akrobat.woff2) format("woff2");
+    src: url('/fonts/akrobat-regular.woff2') format("woff2");
+  }
+
+  @font-face {
+    font-family: "Akrobat";
+    font-style: normal;
+    font-weight: normal;
+    font-display: optional;
+    src: url('/fonts/firaSans-regular.woff2') format("woff2");
   }
   html,
   body {
