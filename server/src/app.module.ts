@@ -1,14 +1,12 @@
-import {Module} from '@nestjs/common';
-import {AppController} from './app.controller';
-import {AppService} from './app.service';
-import {OffersModule} from './offers/offers.module';
-import {PrismaService} from './prisma.service';
-import {PrismaModule} from 'nestjs-prisma';
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { OffersModule } from './offers/offers.module';
+import { PrismaService } from './prisma.service';
+import { PrismaModule } from 'nestjs-prisma';
 import config from './common/configs/config';
-import {loggingMiddleware} from './common/middleware/logging.middleware';
-import {ConfigModule} from '@nestjs/config';
-
-
+import { loggingMiddleware } from './common/middleware/logging.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -32,12 +30,9 @@ import {ConfigModule} from '@nestjs/config';
   providers: [AppService],
 })
 
-
-
 // @Module({
 //   imports: [OffersModule, PrismaService],
 //   controllers: [AppController],
 //   providers: [AppService],
 // })
-
 export class AppModule {}

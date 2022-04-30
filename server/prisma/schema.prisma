@@ -14,7 +14,7 @@ model Offer {
   title          String
   mataTitle      String?
   slug           String?
-  description    String
+  description    String          @db.LongText
   sku            String?
   price          Int
   quantity       Int?
@@ -32,11 +32,13 @@ model Offer {
 
 model Category {
   id          String          @id
-  parentId    String?
   title       String?
   metaTitle   String?
   slug        String?
   description String?
+  parentId    String
+  parent      Category        @relation("CategoryHeritance", fields: [parentId], references: [id])
+  kids        Category[]      @relation("CategoryHeritance")
   offers      OfferCategory[]
 }
 
@@ -49,7 +51,7 @@ model OfferCategory {
 }
 
 model Vendor {
-  id          Int           @id @default(autoincrement())
+  id          String        @id @default(cuid())
   title       String        @unique
   metaTitle   String?
   slug        String?
@@ -58,31 +60,39 @@ model Vendor {
 }
 
 model OfferVendor {
-  id       Int    @id @default(autoincrement())
+  id       String @id @default(cuid())
   offer    Offer  @relation(fields: [offerId], references: [id])
   offerId  String
   vendor   Vendor @relation(fields: [vendorId], references: [id])
-  vendorId Int
+  vendorId String
+}
+
+model Img {
+  id     String     @default(cuid())
+  imgUrl String     @unique
+  offers OfferImg[]
+  @@id([id, imgUrl])
 }
 
 model OfferImg {
-  id      Int    @id @default(autoincrement())
+  id      String @id @default(cuid())
   offer   Offer  @relation(fields: [offerId], references: [id])
   offerId String
-  imgUrl  String
+  param   Img    @relation(fields: [imgId], references: [id])
+  imgId   String
 }
 
 model Param {
-  id     Int          @id @default(autoincrement())
+  id     String       @id @default(cuid())
   name   String       @unique
   offers OfferParam[]
 }
 
 model OfferParam {
-  id      Int    @id @default(autoincrement())
+  id      String @id @default(cuid())
   offer   Offer  @relation(fields: [offerId], references: [id])
   offerId String
   param   Param  @relation(fields: [paramId], references: [id])
-  paramId Int
+  paramId String
   value   String
 }

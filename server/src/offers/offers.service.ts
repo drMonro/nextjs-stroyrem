@@ -1,19 +1,18 @@
-import {Injectable} from '@nestjs/common';
-import {Offer, Prisma} from '@prisma/client';
+import { Injectable } from '@nestjs/common';
+import { Offer, Prisma } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 
 @Injectable()
 export class OffersService {
-  constructor(private prisma: PrismaService) {
-  }
+  constructor(private prisma: PrismaService) {}
 
-  async offer(offerWhereUniqueInput: Prisma.OfferWhereUniqueInput): Promise<Offer | null> {
+  async offer(
+    offerWhereUniqueInput: Prisma.OfferWhereUniqueInput,
+  ): Promise<Offer | null> {
     return this.prisma.offer.findUnique({
       where: offerWhereUniqueInput,
     });
   }
-
-
 
   // async offersRandom(): Promise<any> {
   //   // return this.prisma.offer.aggregate(
@@ -49,7 +48,7 @@ export class OffersService {
     // orderBy?: Prisma.OfferOrderByWithRelationInput;
   }): Promise<Offer[]> {
     // const {skip, take, cursor, where, orderBy} = params;
-    const {skip, take, cursor, where} = params;
-    return this.prisma.offer.findMany({skip, take, cursor, where});
+    const { skip, take, cursor, where } = params;
+    return this.prisma.offer.findMany({ skip, take, cursor, where });
   }
 }

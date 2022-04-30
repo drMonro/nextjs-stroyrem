@@ -1,7 +1,7 @@
-import {HttpAdapterHost, NestFactory} from '@nestjs/core';
-import {AppModule} from './app.module';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import {ValidationPipe} from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import type {
@@ -11,7 +11,6 @@ import type {
 } from 'src/common/configs/config.interface';
 
 let test;
-
 
 const start = async () => {
   try {
@@ -25,7 +24,6 @@ const start = async () => {
     const prismaService: PrismaService = app.get(PrismaService);
     await prismaService.enableShutdownHooks(app);
 
-
     // Prisma Client Exception Filter for unhandled exceptions  ??????????????
     const { httpAdapter } = app.get(HttpAdapterHost);
     app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
@@ -38,7 +36,9 @@ const start = async () => {
     if (swaggerConfig.enabled) {
       const options = new DocumentBuilder()
         .setTitle(swaggerConfig.title || 'Nestjs')
-        .setDescription(swaggerConfig.description || 'The nestjs API description')
+        .setDescription(
+          swaggerConfig.description || 'The nestjs API description',
+        )
         .setVersion(swaggerConfig.version || '1.0')
         .build();
       const document = SwaggerModule.createDocument(app, options);
@@ -51,21 +51,20 @@ const start = async () => {
       app.enableCors();
     }
 
-    await app.listen(PORT, () => console.log(`Server is started on port: ${PORT}`))
-
+    await app.listen(PORT, () =>
+      console.log(`Server is started on port: ${PORT}`),
+    );
 
     //   const prismaService: PrismaService = app.get(PrismaService);
     //   // test = await prismaService.offer.findMany();
     //   // test2 = await AppController.;
-
   } catch (e) {
     console.log(e);
   }
 
-  return test
+  return test;
   // console.log(test)
-
-}
+};
 start();
 
 // const launch = async () => {
@@ -75,4 +74,3 @@ start();
 // }
 //
 // launch();
-

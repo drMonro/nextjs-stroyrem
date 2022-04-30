@@ -3,7 +3,8 @@ import {PrismaClient} from '@prisma/client';
 import {Type} from 'class-transformer';
 
 const parser = require('xml2json');
-
+const jsdom = require('jsdom');
+const {JSDOM} = jsdom;
 export const get1cData = async () => {
   let webData: any;
   await axios({
@@ -46,6 +47,11 @@ export const collectAllVendors = (offers: any) => {
       let duplicateVendorIndex = allVendors.indexOf(vendorParam.$t);
       if (duplicateVendorIndex < 0) {
         allVendors.push(vendorParam.$t);
+      }
+    } else {
+      let duplicateVendorIndex = allVendors.indexOf('NoName');
+      if (duplicateVendorIndex < 0) {
+        allVendors.push('NoName');
       }
     }
 
@@ -91,21 +97,90 @@ export const upsertParams = async (prisma: PrismaClient, all1cParams: any) => {
   console.log(`Parameters was seeded successfully`);
 }
 
-export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
-  console.log(`Preparing data is started`);
+export const createImages = async (prisma: PrismaClient, all1cPictures: any) => {
+  console.log(`${all1cPictures.length} pictures will be updated or create id DB`);
+  // console.log(all1cPictures)
+  await prisma.img.createMany({
+    data: all1cPictures,
+    skipDuplicates: true,
+  })
+  console.log(`Parameters was seeded successfully`);
+}
 
-  const webParams = await prisma.param.findMany();
+export const collectAllImages = (offers1c: any) => {
+  let picturesData = []
 
   for (const offer of offers1c) {
+
+    if (typeof offer.picture === 'string') {
+      picturesData.push({
+        imgUrl: offer.picture,
+      });
+    } else {
+      for (const picture of offer.picture) {
+        picturesData.push({
+          imgUrl: picture,
+        });
+      }
+    }
+  }
+  return picturesData;
+}
+// console.log(picturesData, images.length)
+
+export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
+  console.log(`Preparing data is started`);
+  const webParams = await prisma.param.findMany();
+  const webVendors = await prisma.vendor.findMany();
+  const webImages = await prisma.img.findMany();
+
+  for (const offer of offers1c) {
+    // Boolean Available status
     offer.available = offer.available === 'true';
+    // Pictures to array
     if (typeof (offer.picture) === 'string') {
       offer.picture = [offer.picture]
     }
+    let picturesData = []
+    for (const picture of offer.picture) {
+      const webImage = webImages.find((webImage: any) => webImage.imgUrl === picture);
+      picturesData.push({
+        imgId: webImage.id
+      });
+    }
+    offer.picture = picturesData;
 
+    // Price
     if (Number(offer.price)) {
       offer.price = Math.round(offer.price)
     } else {
       offer.price = 0;
+    }
+    // Description
+    const dom = new JSDOM(offer.description);
+    offer.description = dom.window.document.querySelector('.good-description__par--main').innerHTML;
+    // Setting NaName vendor
+    if (!!offer.param.find(param => param.name === 'Производитель, марка') === false) {
+      offer.param.push({name: 'Производитель, марка', '$t': 'NoName'});
+    }
+
+    for (const param of offer.param) {
+      const dbParam = webParams.find((webParam: any) => webParam.name === param.name);
+      param.paramId = dbParam.id;
+      param.value = param.$t;
+
+      if (param.name === 'Производитель, марка') {
+        const dbVendor = webVendors.find((webVendor: any) => webVendor.title === param.value);
+        offer.vendor = {
+          vendorId: dbVendor.id,
+        }
+        // delete param.paramId;
+        // delete param.value;
+
+        // console.log(param)
+      }
+      delete param.$t;
+      delete param.name;
     }
     delete offer.latitude;
     delete offer.longitude;
@@ -113,108 +188,88 @@ export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
     delete offer.url;
     delete offer.quant;
     delete offer.sales_notes;
-
-    for (const param of offer.param) {
-      const dbParam = webParams.find((webParam: any) => {
-        return webParam.name === param.name;
-      })
-      // if (dbParam) {
-      param.paramId = dbParam.id;
-      // param.paramName = dbParam.name;
-      delete param.name;
-      // }
-      param.value = param.$t;
-      delete param.$t;
-    }
     // console.log(offer)
+
   }
   console.log(`Data was prepared successfully`);
 }
 
 export const upsertOffers = async (prisma: PrismaClient, offers1c: any) => {
-  for (const [index, value] of offers1c.entries()) {
+  for (const offer1c of offers1c) {
     // if (index === 0 || index === 1 || index === 2) {
-    if (index === 0) {
-      // let offer = offers1c[0];
-      console.log(`'${value.name}' ----> is updating`);
-      console.log(value)
-      await prisma.offer.upsert({
-        where: {
-          id: value.id,
-        },
-        update: {
-          available: value.available,
-          // relevantWith: {
-          //   connect: {
-          //     id: "00000000331",
-          //   },
-          // },
+    // if (index === 0) {
+    // let offer = offers1c[0];
+    console.log(`'${offer1c.name}' ----> is updating`);
+    // console.log(offer1c.vendor)
+    console.log(offer1c.available);
 
-          relevantOffers: {
-            connect:
-              [{ id: 'УТ000006442' }, { id: 'УТ000006460' }],
-              // id: "УТ000006442",
+    await prisma.offer.upsert({
+      where: {
+        id: offer1c.id,
+      },
+      update: {
+        available: offer1c.available,
+        description: offer1c.description,
 
-          }
-          // }
-          // title: offer.name,
-          // price: offer.price,
-          // // categoryId: offer.categoryId,
-          // // picture: offer.picture,
-          // description: offer.description,
-        },
-        create: {
-          available: value.available,
-          id: value.id,
-          title: value.name,
-          price: value.price,
-          // description: offer.description,
-          description: 'test',
-          mataTitle: 'test',
-          slug: 'test',
-          sku: 'test',
-          quantity: 0,
-          params: {
-            createMany: {
-              data: value.param,
-            },
-          },
-          images: {
-            createMany: {
-              data: [],
-            },
-          },
-          vendor: {
-            createMany: {
-              data: [],
-            },
-          },
-          // relevantWith: {
-          //   connect: {
-          //     id: "2",
-          //   },
-          // },
-          // relevantOffers: {
-          //   connect: {
-          //     id: "2",
-          //   },
-          // }
+        // images: {
+        //   createMany: {
+        //     data: offer1c.picture,
+        //   },
+        // },
+        // vendor: {
+        //   createMany: {
+        //     data: offer1c.vendor,
+        //   },
+        // },
 
-          // relevantedWith: {
-          //   createMany: {
-          //     data: [],
-          //   },
-          // },
-          // categoryId: offer.categoryId,
-          // picture: offer.picture,
-          // param: {
-          //   createMany: {
-          //     data: offer.param,
-          //   },
-          // },
+        // relevantWith: {
+        //   connect: {
+        //     id: "00000000331",
+        //   },
+        // },
+
+        // relevantOffers: {
+        //   connect:
+        //     [{ id: 'УТ000006442' }, { id: 'УТ000006460' }],
+        //     // id: "УТ000006442",
+        //
+        // }
+        // title: offer.name,
+        // price: offer.price,
+        // // categoryId: offer.categoryId,
+        // // picture: offer.picture,
+        // description: offer.description,
+      },
+      create: {
+        available: offer1c.available,
+        id: offer1c.id,
+        title: offer1c.name,
+        price: offer1c.price,
+        description: offer1c.description,
+        // description: 'test',
+        // mataTitle: 'test',
+        // slug: 'test',
+        // sku: 'test',
+        quantity: 0,
+        params: {
+          createMany: {
+            data: offer1c.param,
+          },
         },
-      })
-    }
+        images: {
+          createMany: {
+            data: offer1c.picture,
+          },
+        },
+        vendor: {
+          createMany: {
+            data: offer1c.vendor,
+          },
+        },
+
+      },
+    })
+
     // for (const param of offer.param) {
     //   await prisma.offerParam.updateMany({
     //     where: {

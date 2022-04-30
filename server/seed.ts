@@ -1,5 +1,5 @@
 import {PrismaClient} from '@prisma/client'
-import {collectAllUniqParams, collectAllVendors, get1cData, prepareData, upsertCategories, upsertOffers, upsertParams, upsertVendors} from './seed-services';
+import {collectAllImages, collectAllUniqParams, collectAllVendors, createImages, get1cData, prepareData, upsertCategories, upsertOffers, upsertParams, upsertVendors} from './seed-services';
 
 const prisma = new PrismaClient()
 
@@ -8,12 +8,31 @@ async function main() {
   await prisma.$connect();
   try {
     console.log(`Start seeding ...`)
-    // await upsertCategories(prisma, categories);
-    // await upsertParams(prisma, collectAllUniqParams(offers1c));
-    // await upsertVendors(prisma, collectAllVendors(offers1c));
+
+    await prisma.offerCategory.deleteMany();
+    await prisma.category.deleteMany();
+    await upsertCategories(prisma, categories);
+
+    await prisma.offerParam.deleteMany();
+    await prisma.param.deleteMany();
+    await upsertParams(prisma, collectAllUniqParams(offers1c));
+
+    await prisma.offerVendor.deleteMany();
+    await prisma.vendor.deleteMany();
+    await upsertVendors(prisma, collectAllVendors(offers1c));
+
+    // await prepareImages(prisma, offers1c);
+    await prisma.offerImg.deleteMany();
+    await prisma.img.deleteMany();
+    await createImages(prisma, collectAllImages(offers1c));
 
     await prepareData(prisma, offers1c);
+
+    await prisma.offer.deleteMany();
+    // // console.log(offers1c)
+
     await upsertOffers(prisma, offers1c);
+
     console.log(`Seeding finished.`)
   } catch (err) {
     console.error(err)
