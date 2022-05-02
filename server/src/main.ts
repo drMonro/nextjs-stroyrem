@@ -9,16 +9,14 @@ import type {
   NestConfig,
   SwaggerConfig,
 } from 'src/common/configs/config.interface';
-import {PrismaClient} from '@prisma/client';
 
 let test;
-const prisma = new PrismaClient()
 
 const start = async () => {
   try {
     const PORT = process.env.PORT || 5000;
     const app = await NestFactory.create(AppModule);
-    await prisma.$connect();
+    let prisma: PrismaService = app.get(PrismaService);
     let candidate = await prisma.user.findMany();
 
     if (candidate.length === 0) {
@@ -69,9 +67,7 @@ const start = async () => {
       console.log(`Server is started on port: ${PORT}`),
     );
 
-    //   const prismaService: PrismaService = app.get(PrismaService);
-    //   // test = await prismaService.offer.findMany();
-    //   // test2 = await AppController.;
+
   } catch (e) {
     console.log(e);
   }
