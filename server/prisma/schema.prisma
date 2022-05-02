@@ -22,10 +22,10 @@ model Offer {
   images         OfferImg[]
   vendor         OfferVendor[]
   params         OfferParam[]
+  cart           CartItem?
   relevantWith   Offer[]         @relation("RelevantOffers", references: [id])
   relevantOffers Offer[]         @relation("RelevantOffers", references: [id])
   createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
 
   @@fulltext([title])
 }
@@ -71,6 +71,7 @@ model Img {
   id     String     @default(cuid())
   imgUrl String     @unique
   offers OfferImg[]
+
   @@id([id, imgUrl])
 }
 
@@ -78,7 +79,7 @@ model OfferImg {
   id      String @id @default(cuid())
   offer   Offer  @relation(fields: [offerId], references: [id])
   offerId String
-  param   Img    @relation(fields: [imgId], references: [id])
+  img     Img    @relation(fields: [imgId], references: [id])
   imgId   String
 }
 
@@ -95,4 +96,44 @@ model OfferParam {
   param   Param  @relation(fields: [paramId], references: [id])
   paramId String
   value   String
+}
+
+model User {
+  id          Int        @id @default(autoincrement())
+  role        Role       @default(USER)
+  email       String     @unique
+  name        String
+  cart        UserCart[]
+  registredAt DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model CartItem {
+  id        Int      @id @default(autoincrement())
+  cuantity  Int      @default(1)
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  cartId    Int
+  offer     Offer    @relation(fields: [offerId], references: [id])
+  offerId   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id    Int        @id @default(autoincrement())
+  items CartItem[]
+  cart  UserCart[]
+}
+
+model UserCart {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  cart   Cart @relation(fields: [cartId], references: [id])
+  cartId Int
 }

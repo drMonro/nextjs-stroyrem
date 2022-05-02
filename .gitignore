@@ -4,3 +4,4 @@ package-lock.json
 .env
 /gulpfile.js
 /package.json
+/server/src/http-client/http-client.env.json

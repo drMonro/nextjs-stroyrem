@@ -1,21 +1,35 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
-import { ValidationPipe } from '@nestjs/common';
-import { PrismaClientExceptionFilter, PrismaService } from 'nestjs-prisma';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import {HttpAdapterHost, NestFactory} from '@nestjs/core';
+import {AppModule} from './app.module';
+import {ConfigService} from '@nestjs/config';
+import {ValidationPipe} from '@nestjs/common';
+import {PrismaClientExceptionFilter, PrismaService} from 'nestjs-prisma';
+import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import type {
   CorsConfig,
   NestConfig,
   SwaggerConfig,
 } from 'src/common/configs/config.interface';
+import {PrismaClient} from '@prisma/client';
 
 let test;
+const prisma = new PrismaClient()
 
 const start = async () => {
   try {
     const PORT = process.env.PORT || 5000;
     const app = await NestFactory.create(AppModule);
+    await prisma.$connect();
+    let candidate = await prisma.user.findMany();
+
+    if (candidate.length === 0) {
+      await prisma.user.create({
+        data: {
+          role: 'ADMIN',
+          email: 'rapman477@ya.ru',
+          name: 'Ray',
+        },
+      });
+    }
 
     // Validation ?????????????
     app.useGlobalPipes(new ValidationPipe());
@@ -25,7 +39,7 @@ const start = async () => {
     await prismaService.enableShutdownHooks(app);
 
     // Prisma Client Exception Filter for unhandled exceptions  ??????????????
-    const { httpAdapter } = app.get(HttpAdapterHost);
+    const {httpAdapter} = app.get(HttpAdapterHost);
     app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
     const configService = app.get(ConfigService);

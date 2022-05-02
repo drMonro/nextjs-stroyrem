@@ -1,0 +1,6 @@
+###
+GET http://{{host}}:{{port}}/api/offers-random/20
+
+Accept: application/json
+
+###

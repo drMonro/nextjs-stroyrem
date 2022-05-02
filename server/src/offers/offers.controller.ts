@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import {Controller, Get, Param} from '@nestjs/common';
 import { Offer as OfferModel } from '@prisma/client';
 import { OffersService } from './offers.service';
 
@@ -10,15 +10,15 @@ export class OffersController {
   async getAllOffers(): Promise<OfferModel[]> {
     return this.offersService.offers({
       where: {
-        name: { contains: 'пол' },
+        title: { contains: 'пол' },
       },
     });
   }
 
-  // @Get('offers-random')
-  // async getRandomOffers(): Promise<OfferModel[]> {
-  //   return this.offersService.offersRandom();
-  // }
+  @Get('offers-random/:count')
+  async getRandomOffers(@Param('count') count: number): Promise<OfferModel[]> {
+    return this.offersService.offersRandom(count);
+  }
 
   // @Get()
   // getOffersByCategory() {

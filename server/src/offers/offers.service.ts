@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { Offer, Prisma } from '@prisma/client';
-import { PrismaService } from 'nestjs-prisma';
+import {Injectable} from '@nestjs/common';
+import {Offer, Prisma} from '@prisma/client';
+import {PrismaService} from 'nestjs-prisma';
+import {getRandomIndexesArray, getRandomNumberFromRange} from '../../services';
 
 @Injectable()
 export class OffersService {
@@ -14,31 +15,24 @@ export class OffersService {
     });
   }
 
-  // async offersRandom(): Promise<any> {
-  //   // return this.prisma.offer.aggregate(
-  //   //   [ { $sample: { size: 3 } } ]
-  //   // )
-  //   return await this.prisma.$transaction([
-  //     // this.prisma.offer.findRaw({
-  //     //   filter: { age: { $gt: 25 } }
-  //     // }),
-  //     this.prisma.offer.aggregateRaw({
-  //       pipeline: [
-  //         { $sample: { size: 1 } },
-  //         // { $match: { name: "registered" } },
-  //         // { $group: { _id: "fdsf"} }
-  //       ]
-  //     }),
-  //   ])
-  //
-  //   // return this.prisma.offer.aggregateRaw({
-  //   //   pipeline: [
-  //   //     { $sample: { size: 3 } },
-  //   //     { $match: { status: "registered" } },
-  //   //     { $group: { _id: "$country", total: { $sum: 1 } } }
-  //   //   ]
-  //   // })
-  // }
+  async offersRandom(count: number): Promise<any> {
+    let allOffers = await this.prisma.offer.findMany({
+      include: {
+        images: {
+          include: {
+            img: true,
+          },
+        },
+      },
+    });
+    let randomOffers = [];
+
+    let randomIndexes = getRandomIndexesArray(allOffers.length, count)
+    randomIndexes.forEach(index => {
+      randomOffers.push(allOffers[index])
+    });
+    return randomOffers;
+  }
 
   async offers(params: {
     skip?: number;

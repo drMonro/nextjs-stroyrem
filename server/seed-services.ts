@@ -126,7 +126,6 @@ export const collectAllImages = (offers1c: any) => {
   }
   return picturesData;
 }
-// console.log(picturesData, images.length)
 
 export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
   console.log(`Preparing data is started`);
@@ -174,10 +173,6 @@ export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
         offer.vendor = {
           vendorId: dbVendor.id,
         }
-        // delete param.paramId;
-        // delete param.value;
-
-        // console.log(param)
       }
       delete param.$t;
       delete param.name;
@@ -188,65 +183,20 @@ export let prepareData = async (prisma: PrismaClient, offers1c: any) => {
     delete offer.url;
     delete offer.quant;
     delete offer.sales_notes;
-    // console.log(offer)
 
   }
   console.log(`Data was prepared successfully`);
 }
 
-export const upsertOffers = async (prisma: PrismaClient, offers1c: any) => {
+export const createOffers = async (prisma: PrismaClient, offers1c: any) => {
   for (const offer1c of offers1c) {
-    // if (index === 0 || index === 1 || index === 2) {
-    // if (index === 0) {
-    // let offer = offers1c[0];
-    console.log(`'${offer1c.name}' ----> is updating`);
-    // console.log(offer1c.vendor)
-    console.log(offer1c.available);
-
-    await prisma.offer.upsert({
-      where: {
-        id: offer1c.id,
-      },
-      update: {
-        available: offer1c.available,
-        description: offer1c.description,
-
-        // images: {
-        //   createMany: {
-        //     data: offer1c.picture,
-        //   },
-        // },
-        // vendor: {
-        //   createMany: {
-        //     data: offer1c.vendor,
-        //   },
-        // },
-
-        // relevantWith: {
-        //   connect: {
-        //     id: "00000000331",
-        //   },
-        // },
-
-        // relevantOffers: {
-        //   connect:
-        //     [{ id: 'УТ000006442' }, { id: 'УТ000006460' }],
-        //     // id: "УТ000006442",
-        //
-        // }
-        // title: offer.name,
-        // price: offer.price,
-        // // categoryId: offer.categoryId,
-        // // picture: offer.picture,
-        // description: offer.description,
-      },
-      create: {
+    console.log(`'${offer1c.name}' ----> is creating`);
+    await prisma.offer.create({data: {
         available: offer1c.available,
         id: offer1c.id,
         title: offer1c.name,
         price: offer1c.price,
         description: offer1c.description,
-        // description: 'test',
         // mataTitle: 'test',
         // slug: 'test',
         // sku: 'test',
@@ -266,27 +216,8 @@ export const upsertOffers = async (prisma: PrismaClient, offers1c: any) => {
             data: offer1c.vendor,
           },
         },
-
       },
     })
-
-    // for (const param of offer.param) {
-    //   await prisma.offerParam.updateMany({
-    //     where: {
-    //       AND: [
-    //         {
-    //           paramId: param.paramId,
-    //         },
-    //         {
-    //           offerId: offer.id
-    //         },
-    //       ],
-    //     },
-    //     data: {
-    //       value: param.value
-    //     },
-    //   })
-    // }
   }
 }
 
