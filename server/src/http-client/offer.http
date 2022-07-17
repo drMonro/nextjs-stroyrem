@@ -1,5 +1,5 @@
 ###
-GET http://{{host}}:{{port}}/api/offers-random/20
+GET http://{{host}}:{{port}}/api/offers-random/3
 
 Accept: application/json
 

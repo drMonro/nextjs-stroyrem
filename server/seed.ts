@@ -9,29 +9,29 @@ async function main() {
   try {
     console.log(`Start seeding ...`)
 
-    await prisma.offerCategory.deleteMany();
-    await prisma.category.deleteMany();
-    await upsertCategories(prisma, categories);
+    // await prisma.offerCategory.deleteMany();
+    // await prisma.category.deleteMany();
+    // await upsertCategories(prisma, categories);
 
-    await prisma.offerParam.deleteMany();
-    await prisma.param.deleteMany();
-    await upsertParams(prisma, collectAllUniqParams(offers1c));
+    // await prisma.offerParam.deleteMany();
+    // await prisma.param.deleteMany();
+    // await upsertParams(prisma, collectAllUniqParams(offers1c));
 
-    await prisma.offerVendor.deleteMany();
-    await prisma.vendor.deleteMany();
-    await upsertVendors(prisma, collectAllVendors(offers1c));
+    // await prisma.offerVendor.deleteMany();
+    // await prisma.vendor.deleteMany();
+    // await upsertVendors(prisma, collectAllVendors(offers1c));
 
     // await prepareImages(prisma, offers1c);
-    await prisma.offerImg.deleteMany();
-    await prisma.img.deleteMany();
+    // await prisma.offerImg.deleteMany();
+    // await prisma.img.deleteMany();
     await createImages(prisma, collectAllImages(offers1c));
 
-    await prepareData(prisma, offers1c);
+    // await prepareData(prisma, offers1c);
 
-    await prisma.offer.deleteMany();
+    // await prisma.offer.deleteMany();
     // // console.log(offers1c)
 
-    await createOffers(prisma, offers1c);
+    // await createOffers(prisma, offers1c);
 
     console.log(`Seeding finished.`)
   } catch (err) {

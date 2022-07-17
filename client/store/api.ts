@@ -1,7 +1,7 @@
 import {BaseQueryFn} from '@reduxjs/toolkit/query';
 import axios, {AxiosError, AxiosRequestConfig, AxiosResponse} from 'axios';
 
-const BASE_URL = 'https://pokeapi.co/api/v2/';
+const BASE_URL = 'http://localhost:5000/api';
 const API_TIMEOUT = 5000;
 
 
@@ -12,7 +12,9 @@ const createAPI = (): BaseQueryFn => {
   });
 
   api.interceptors.response.use(
-    (response: AxiosResponse) => response,
+    (response: AxiosResponse) => {
+      return {data: response.data}
+    },
     (err: AxiosError) => ({error: {status: err.response?.status, data: err.response?.data}}),
   );
 
