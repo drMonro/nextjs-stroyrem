@@ -16,9 +16,11 @@ const start = async () => {
   try {
     const PORT = process.env.PORT || 5000;
     const app = await NestFactory.create(AppModule);
-    let prisma: PrismaService = app.get(PrismaService);
-    let candidate = await prisma.user.findMany();
 
+    const prisma: PrismaService = app.get(PrismaService);
+
+
+    let candidate = await prisma.user.findMany();
     if (candidate.length === 0) {
       await prisma.user.create({
         data: {
@@ -32,9 +34,8 @@ const start = async () => {
     // Validation ?????????????
     app.useGlobalPipes(new ValidationPipe());
 
-    // enable shutdown hook ?????????????
-    const prismaService: PrismaService = app.get(PrismaService);
-    await prismaService.enableShutdownHooks(app);
+    // enable shutdown hook prisma ?????????????
+    await prisma.enableShutdownHooks(app);
 
     // Prisma Client Exception Filter for unhandled exceptions  ??????????????
     const {httpAdapter} = app.get(HttpAdapterHost);

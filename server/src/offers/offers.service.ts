@@ -15,7 +15,7 @@ export class OffersService {
     });
   }
 
-  async offersRandom(count: number): Promise<any> {
+  async offersRandom(count: number): Promise<Offer[]> {
     let allOffers = await this.prisma.offer.findMany({
       include: {
         images: {

@@ -2,7 +2,7 @@ import styles from './layout.module.css';
 import utilStyles from '../styles/utils.module.css';
 import Link from 'next/link';
 import React from 'react';
-import Navigation from './common/navigation';
+import HeaderTopNavigation from './common/navigation';
 import {Affix, Layout} from 'antd';
 import styled from 'styled-components';
 import {Content, Footer} from 'antd/lib/layout/layout';
@@ -11,6 +11,7 @@ import {Content, Footer} from 'antd/lib/layout/layout';
 import Logo from '../public/images/svg/logo-white.svg';
 // import Logo from '../Logo.svg'
 import {useAppContext} from '../context/AppContext'
+import HeaderMainPanel from './common/HeaderMainPanel';
 
 // import {ReactComponent as IconBookmark} from '../Logo.svg'
 const name = 'RTK-Query SSR example';
@@ -23,14 +24,11 @@ const StyledLayout = styled(Layout)`
 `;
 
 const StyledHeader = styled('header')`
-  background-color: #00408C;
 
   //padding: 0 50px;
 `;
 
-const StyledLogo = styled(Logo)`
-  width: 250px;
-`;
+
 
 
 export default function LayoutCommon(props: { children: React.ReactNode; home?: boolean; }) {
@@ -46,22 +44,22 @@ export default function LayoutCommon(props: { children: React.ReactNode; home?: 
       <Affix offsetTop={0}>
 
         <StyledHeader>
-          {/*<StyledLogo/>*/}
-          <Navigation/>
+          <HeaderTopNavigation/>
+          <HeaderMainPanel/>
 
-          {home ? (
-            <>
-              <h1 className={utilStyles.heading2Xl}>{name}</h1>
-            </>
-          ) : (
-            <>
-              <h2 className={utilStyles.headingLg}>
-                <Link href="/">
-                  <a className={utilStyles.colorInherit}>{name}</a>
-                </Link>
-              </h2>
-            </>
-          )}
+          {/*{home ? (*/}
+          {/*  <>*/}
+          {/*    <h1 className={utilStyles.heading2Xl}>{name}</h1>*/}
+          {/*  </>*/}
+          {/*) : (*/}
+          {/*  <>*/}
+          {/*    <h2 className={utilStyles.headingLg}>*/}
+          {/*      <Link href="/">*/}
+          {/*        <a className={utilStyles.colorInherit}>{name}</a>*/}
+          {/*      </Link>*/}
+          {/*    </h2>*/}
+          {/*  </>*/}
+          {/*)}*/}
         </StyledHeader>
       </Affix>
       <Content style={{padding: '0 50px'}}>

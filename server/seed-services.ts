@@ -109,9 +109,10 @@ export const createImages = async (prisma: PrismaClient, all1cPictures: any) => 
 
 export const collectAllImages = (offers1c: any) => {
   let picturesData = []
+  let slugsData = []
+  let index = 0;
 
   for (const offer of offers1c) {
-
     if (typeof offer.picture === 'string') {
       picturesData.push({
         imgUrl: offer.picture,
@@ -123,6 +124,13 @@ export const collectAllImages = (offers1c: any) => {
         });
       }
     }
+
+    const candidate = picturesData[index].imgUrl.split('http://xn--24-mlcpqjncfk.xn--p1ai/image/catalog/images/1c/')
+    const slug = candidate[1].split('.jpg')
+    slugsData.push(slug[0].concat('-', offer.id));
+    index++;
+
+
   }
   return picturesData;
 }

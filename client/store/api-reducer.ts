@@ -1,8 +1,10 @@
 import {createApi} from '@reduxjs/toolkit/dist/query/react';
 import createAPI from './api';
 import {HYDRATE} from 'next-redux-wrapper';
+import { Offer as OfferModel } from '../../server/node_modules/@prisma/client';
 
 export const apiReducer = createApi({
+
   reducerPath: 'api',
   baseQuery: createAPI(),
   extractRehydrationInfo(action, { reducerPath }) {
@@ -12,20 +14,31 @@ export const apiReducer = createApi({
   },
   tagTypes: [],
   endpoints: (builder) => ({
-    getPokemonByName: builder.query<{ species: { name: string }; sprites: { front_shiny: string } }, string>({
-      query: (name) => ({
-        url: `pokemon/${name}`,
+    getRandomOffers: builder.query<OfferModel[], number>({
+      query: (count) => ({
+        url: `offers-random/${count}`,
         method: 'get',
       }),
+      // transformResponse: (response:any) => {
+      //   console.log(response, 'vase')
+      //   return response
+      // },
     }),
-    getPokemonList: builder.query<{ results: Array<{ name: string }> }, void>({
-      query: () => ({
-        url: `pokemon/`,
-        method: 'get',
-      }),
-    }),
+
+    // getPokemonByName: builder.query<{ species: { name: string }; sprites: { front_shiny: string } }, string>({
+    //   query: (name) => ({
+    //     url: `pokemon/${name}`,
+    //     method: 'get',
+    //   }),
+    // }),
+    // getPokemonList: builder.query<{ results: Array<{ name: string }> }, void>({
+    //   query: () => ({
+    //     url: `pokemon/`,
+    //     method: 'get',
+    //   }),
+    // }),
   }),
 });
 
-export const {useGetPokemonByNameQuery, useGetPokemonListQuery, util: { getRunningOperationPromises }} = apiReducer;
-export const { getPokemonByName, getPokemonList } = apiReducer.endpoints;
+export const {useGetRandomOffersQuery, util: { getRunningOperationPromises }} = apiReducer;
+export const { getRandomOffers } = apiReducer.endpoints;
